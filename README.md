@@ -38,3 +38,181 @@ pip install ocsw
 | OCTAVE_CLOUD_TOKEN   | Master Token                                       |
 | OCTAVE_CLOUD_USER    | Your user id                                       |
 | OCTAVE_CLOUD_COMPANY | Identifier of one of the company                   |
+
+
+## Command: blueprint
+```
+usage: ocsw-cli blueprint [-h] COMMAND ...
+
+Manage blueprints
+
+positional arguments:
+  COMMAND
+    ls        display blueprint list
+    inspect   display detailed information on one or more blueprints
+
+optional arguments:
+  -h, --help  show this help message and exit
+```
+## Command: cloud
+```
+usage: ocsw-cli cloud [-h] COMMAND ...
+
+Manage Cloud
+
+positional arguments:
+  COMMAND
+    fetch     download objects and refs from cloud
+
+optional arguments:
+  -h, --help  show this help message and exit
+```
+## Command: company
+```
+usage: ocsw-cli company [-h] COMMAND ...
+
+Manage companies
+
+positional arguments:
+  COMMAND
+    ls        display company list
+    inspect   display detailed information on one or more companies
+    switch    set company active
+
+optional arguments:
+  -h, --help  show this help message and exit
+```
+## Command: device
+```
+usage: ocsw-cli device [-h] COMMAND ...
+
+Manage devices
+
+positional arguments:
+  COMMAND
+    actions   list device edge actions
+    create    creating device
+    inspect   display detailed information on one or more devices
+    lc        list devices configuration
+    li        list devices identity
+    ls        list devices connectivity
+    rm        remove one or more devices
+    tags      set device tags
+    events    display recent events
+    changes   display recent changes
+
+optional arguments:
+  -h, --help  show this help message and exit
+```
+## Command: edge_action
+```
+usage: ocsw-cli edge_action [-h] COMMAND ...
+
+Manage edge actions
+
+positional arguments:
+  COMMAND
+    inspect   display detailed information on one or more edge actions
+    ls        list edge action
+
+optional arguments:
+  -h, --help  show this help message and exit
+```
+## Command: firmware
+```
+usage: ocsw-cli firmware [-h] COMMAND ...
+
+Manage firmwares
+
+positional arguments:
+  COMMAND
+    ls        list of available firmware
+    note      display notes on one or more firmware
+
+optional arguments:
+  -h, --help  show this help message and exit
+```
+## Command: group
+```
+usage: ocsw-cli group [-h] COMMAND ...
+
+Manage user groups
+
+positional arguments:
+  COMMAND
+    ls        display user group list
+    inspect   display detailed information on one or more user groups
+
+optional arguments:
+  -h, --help  show this help message and exit
+
+## Command: stream
+
+usage: ocsw-cli stream [-h] COMMAND ...
+```
+Manage streams
+```
+positional arguments:
+  COMMAND
+    ls        display streams list
+    inspect   display detailed information on one or more streams
+    events    display stream events list
+
+optional arguments:
+  -h, --help  show this help message and exit
+```
+## Command: user
+```
+usage: ocsw-cli user [-h] COMMAND ...
+
+Manage users
+
+positional arguments:
+  COMMAND
+    ls        display user list
+    inspect   display detailed information on one or more users
+
+optional arguments:
+  -h, --help  show this help message and exit
+```
+## Command: identity
+```
+usage: ocsw-cli identity [-h]
+
+Display detailed information about current user
+
+optional arguments:
+  -h, --help  show this help message and exit
+```
+## Command: login
+```
+usage: ocsw-cli login [-h] [-t] [-u] [COMPANY]
+
+Log in to a Octave Cloud
+
+positional arguments:
+  COMPANY           company name
+
+optional arguments:
+  -h, --help        show this help message and exit
+  -t , --token      token
+  -u , --username   username
+```
+## Command: logout
+```
+usage: ocsw-cli logout [-h]
+
+Log out from a Octave Cloud
+
+optional arguments:
+  -h, --help  show this help message and exit
+```
+## Command: release
+```
+usage: ocsw-cli release [-h]
+
+Display Octave API Version Information
+
+optional arguments:
+  -h, --help  show this help message and exit
+```
