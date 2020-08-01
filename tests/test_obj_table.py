@@ -5,6 +5,8 @@ from ocsw.utils.table import ObjTable
 
 
 class TestObjTable(unittest.TestCase):
+
+    @unittest.skip("local time")
     def test_table_common(self):
 
         columns = [

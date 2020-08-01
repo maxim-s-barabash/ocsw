@@ -123,7 +123,7 @@ class Config:
 
     def save(self, filename):
 
-        dirname = os.path.dirname(filename)
+        dirname = os.path.dirname(os.path.abspath(filename))
         if not os.path.isdir(dirname):
             os.makedirs(dirname)
 
