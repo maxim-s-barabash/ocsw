@@ -145,13 +145,13 @@ positional arguments:
 
 optional arguments:
   -h, --help  show this help message and exit
-
+```
 ## Command: stream
-
+```
 usage: ocsw-cli stream [-h] COMMAND ...
-```
+
 Manage streams
-```
+
 positional arguments:
   COMMAND
     ls        display streams list
