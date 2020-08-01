@@ -42,6 +42,36 @@ pip install ocsw
 | OCTAVE_CLOUD_COMPANY | Identifier of one of the company                   |
 
 
+## Usage
+```
+usage: ocsw-cli [-h] [-H] [-C PATH] [-D] [-v] [--show-secrets]  ...
+
+Manage and monitor your devices
+
+optional arguments:
+  -h, --help      show this help message and exit
+  -H              show help from all command
+  -C PATH         location of configuration path (default ".")
+  -D, --debug     enable debug output
+  -v, --version   show program's version number and exit
+  --show-secrets  decrypt secrets and displays plain text
+
+commands:
+  
+    blueprint     Manage blueprints
+    cloud         Manage cloud
+    company       Manage companies
+    device        Manage devices
+    edge_action   Manage edge actions
+    firmware      Manage firmwares
+    group         Manage user groups
+    stream        Manage streams
+    user          Manage users
+    identity      Display detailed information about current user
+    login         Log in to a Octave Cloud
+    logout        Log out from a Octave Cloud
+    release       Display Octave API Version Information
+```
 ## Command: blueprint
 ```
 usage: ocsw-cli blueprint [-h] COMMAND ...
