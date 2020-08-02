@@ -1,11 +1,10 @@
 import unittest
-from datetime import datetime, date
+from datetime import date, datetime
 
 from ocsw.utils.table import ObjTable, PropTable
 
 
 class TestObjTable(unittest.TestCase):
-
     def test_table_common(self):
 
         columns = [
@@ -42,20 +41,17 @@ class TestObjTable(unittest.TestCase):
         )
         self.assertEqual(str(table), snapshot)
 
-
     def test_props_table_common(self):
 
         item = {"date": 1595577615.600, "model": "MODEL-1234"}
         props_row = [
-           {"name": "date", "label": "Date", "render": date.fromtimestamp},
-           {"name": "model", "label": "Model"}
+            {"name": "date", "label": "Date", "render": date.fromtimestamp},
+            {"name": "model", "label": "Model"},
         ]
         table = PropTable(item, props_row)
-        snapshot = (
-            "Date    2020-07-24\n"
-            "Model   MODEL-1234"
-        )
+        snapshot = "Date    2020-07-24\nModel   MODEL-1234"
         self.assertEqual(str(table), snapshot)
+
 
 if __name__ == "__main__":
     unittest.main()

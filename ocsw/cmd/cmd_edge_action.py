@@ -96,10 +96,7 @@ def init_cli(subparsers):
     )
     parser_inspect.set_defaults(func=cmd_edge_actions_inspect)
     parser_inspect.add_argument(
-        "edge_actions",
-        metavar="ACTION",
-        nargs="+",
-        help="edge action id",
+        "edge_actions", metavar="ACTION", nargs="+", help="edge action id",
     )
 
     # LS

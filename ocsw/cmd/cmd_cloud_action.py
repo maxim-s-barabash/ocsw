@@ -24,7 +24,6 @@ import asyncio
 
 from ..utils import render
 from ..utils.format_pretty_json import pprintj
-from ..utils.helpers import get
 from ..utils.table import ObjTable
 
 
@@ -92,10 +91,7 @@ def init_cli(subparsers):
     )
     parser_inspect.set_defaults(func=cmd_cloud_actions_inspect)
     parser_inspect.add_argument(
-        "cloud_actions",
-        metavar="ACTION",
-        nargs="+",
-        help="cloud action id",
+        "cloud_actions", metavar="ACTION", nargs="+", help="cloud action id",
     )
 
     # LS
