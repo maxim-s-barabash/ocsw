@@ -89,9 +89,9 @@ class APIClient(
         headers = dict()
         if self._user_agent:
             headers["User-Agent"] = str(self._user_agent)
-        if "login" in self._auth:
+        if self._auth["login"]:
             headers["X-Auth-User"] = str(self._auth["login"])
-        if "token" in self._auth:
+        if self._auth["token"]:
             headers["X-Auth-Token"] = str(self._auth["token"])
         return headers
 

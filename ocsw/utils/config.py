@@ -74,8 +74,6 @@ class Config:
 
         if filename and os.path.isfile(filename):
             self.load(filename)
-        else:
-            LOG.warning("Config file not exist %s", filename)
         self.set(**kwargs)
 
     def as_dict(self):
