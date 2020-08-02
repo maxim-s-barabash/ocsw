@@ -1,12 +1,11 @@
 import unittest
-from datetime import datetime
+from datetime import datetime, date
 
-from ocsw.utils.table import ObjTable
+from ocsw.utils.table import ObjTable, PropTable
 
 
 class TestObjTable(unittest.TestCase):
 
-    @unittest.skip("local time")
     def test_table_common(self):
 
         columns = [
@@ -15,7 +14,7 @@ class TestObjTable(unittest.TestCase):
             dict(
                 field="creationDate",
                 title="CREATION DATE",
-                render=lambda d, c: datetime.fromtimestamp(d[c["field"]]),
+                render=lambda d, c: datetime.utcfromtimestamp(d[c["field"]]),
                 width=10,
             ),
             dict(
@@ -35,14 +34,28 @@ class TestObjTable(unittest.TestCase):
             "ID      NAME     CREATION     SYNCED\n"
             "                 DATE               \n"
             "1       Name 1   2017-07-14      yes\n"
-            "                 05:40:00           \n"
+            "                 02:40:00           \n"
             "2       Name 2   2014-05-13       no\n"
-            "                 19:53:20           \n"
+            "                 16:53:20           \n"
             "3       Name 3   2008-01-10       no\n"
-            "                 23:20:00           "
+            "                 21:20:00           "
         )
         self.assertEqual(str(table), snapshot)
 
+
+    def test_props_table_common(self):
+
+        item = {"date": 1595577615.600, "model": "MODEL-1234"}
+        props_row = [
+           {"name": "date", "label": "Date", "render": date.fromtimestamp},
+           {"name": "model", "label": "Model"}
+        ]
+        table = PropTable(item, props_row)
+        snapshot = (
+            "Date    2020-07-24\n"
+            "Model   MODEL-1234"
+        )
+        self.assertEqual(str(table), snapshot)
 
 if __name__ == "__main__":
     unittest.main()
