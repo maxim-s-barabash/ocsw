@@ -9,6 +9,7 @@ from . import constants, errors
 from .cmd import (
     cmd_blueprint,
     cmd_cloud,
+    cmd_cloud_action,
     cmd_company,
     cmd_device,
     cmd_edge_action,
@@ -62,6 +63,7 @@ def main():
 
     cmd_blueprint.init_cli(subparsers)
     cmd_cloud.init_cli(subparsers)
+    cmd_cloud_action.init_cli(subparsers)
     cmd_company.init_cli(subparsers)
     cmd_device.init_cli(subparsers)
     cmd_edge_action.init_cli(subparsers)

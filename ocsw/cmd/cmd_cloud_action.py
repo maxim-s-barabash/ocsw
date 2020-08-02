@@ -18,7 +18,7 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
-"""Manage Edge Actions."""
+"""Manage Cloud Actions."""
 
 import asyncio
 
@@ -28,19 +28,19 @@ from ..utils.helpers import get
 from ..utils.table import ObjTable
 
 
-async def cmd_edge_actions_inspect(client, edge_actions, **_kwargs):
-    """Display detailed information on one or more edge actions.
+async def cmd_cloud_actions_inspect(client, cloud_actions, **_kwargs):
+    """Display detailed information on one or more cloud actions.
 
     Args:
         client (ocsw.api.client.APIClient): APIClient
-        edge_actions (list): list of edge actions id
+        cloud_actions (list): list of cloud actions id
     """
-    futures = [client.inspect_edge_action(uid) for uid in edge_actions]
+    futures = [client.inspect_action(uid) for uid in cloud_actions]
     items = [resp.get("body") for resp in await asyncio.gather(*futures)]
     pprintj(items)
 
 
-async def cmd_edge_actions_ls(client, **_kwargs):
+async def cmd_cloud_actions_ls(client, **_kwargs):
 
     fields = [
         "id",
@@ -51,7 +51,7 @@ async def cmd_edge_actions_ls(client, **_kwargs):
         "version",
         # "companyId",
     ]
-    resp = await client.edge_actions(
+    resp = await client.actions(
         fields=fields,
         sort="description",
         limit=1000,  # TODO: set from configure
@@ -68,11 +68,7 @@ async def cmd_edge_actions_ls(client, **_kwargs):
             title="UPDATE DATE",
             render=render.timestamp_delta,
         ),
-        dict(
-            field="source",
-            title="OBSERVATION",
-            render=lambda d, c: get(d, c["field"], "").split("://")[-1],
-        ),
+        dict(field="source", title="OBSERVATION"),
         dict(field="version", title="VERSION", render=render.map),
         # dict(field="companyId")
     ]
@@ -82,9 +78,9 @@ async def cmd_edge_actions_ls(client, **_kwargs):
 
 
 def init_cli(subparsers):
-    prompt = "Manage edge actions"
+    prompt = "Manage cloud actions"
     parser = subparsers.add_parser(
-        "edge_action", help=prompt, description=prompt
+        "cloud_action", help=prompt, description=prompt
     )
     parser.set_defaults(func=lambda **_kwargs: parser.print_help())
     sub = parser.add_subparsers(metavar="COMMAND")
@@ -92,16 +88,16 @@ def init_cli(subparsers):
     # INSPECT
     parser_inspect = sub.add_parser(
         "inspect",
-        help="display detailed information on one or more edge actions",
+        help="display detailed information on one or more cloud actions",
     )
-    parser_inspect.set_defaults(func=cmd_edge_actions_inspect)
+    parser_inspect.set_defaults(func=cmd_cloud_actions_inspect)
     parser_inspect.add_argument(
-        "edge_actions",
+        "cloud_actions",
         metavar="ACTION",
         nargs="+",
-        help="edge action id",
+        help="cloud action id",
     )
 
     # LS
-    parser_lc = sub.add_parser("ls", help="list edge action")
-    parser_lc.set_defaults(func=cmd_edge_actions_ls)
+    parser_lc = sub.add_parser("ls", help="list cloud action")
+    parser_lc.set_defaults(func=cmd_cloud_actions_ls)
