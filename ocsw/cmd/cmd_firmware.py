@@ -80,7 +80,7 @@ async def cmd_firmware_ls(client, **_kwargs):
 
 
 def init_cli(subparsers):
-    prompt = "Manage firmwares"
+    prompt = "Manage firmware"
     parser = subparsers.add_parser("firmware", help=prompt, description=prompt)
     parser.set_defaults(func=lambda **_kwargs: parser.print_help())
     sub = parser.add_subparsers(metavar="COMMAND")

@@ -60,10 +60,11 @@ commands:
   
     blueprint     Manage blueprints
     cloud         Manage cloud
+    cloud_action  Manage cloud actions
     company       Manage companies
     device        Manage devices
     edge_action   Manage edge actions
-    firmware      Manage firmwares
+    firmware      Manage firmware's
     group         Manage user groups
     stream        Manage streams
     user          Manage users
@@ -95,6 +96,20 @@ Manage Cloud
 positional arguments:
   COMMAND
     fetch     download objects and refs from cloud
+
+optional arguments:
+  -h, --help  show this help message and exit
+```
+## Command: cloud_action
+```
+usage: ocsw-cli cloud_action [-h] COMMAND ...
+
+Manage cloud actions
+
+positional arguments:
+  COMMAND
+    inspect   display detailed information on one or more cloud actions
+    ls        list cloud action
 
 optional arguments:
   -h, --help  show this help message and exit
