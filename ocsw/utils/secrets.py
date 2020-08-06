@@ -40,16 +40,17 @@ def replace(data, match, repl):
         return data
 
 
-def mask_secrets(value, secrets):
+def mask_secrets(structure, secrets, masked_value=MASKED_ATTRIBUTE_VALUE):
     """Replaces values in keys that are not for public distribution.
 
     Args:
-        value ([dict, list]): the structure in which must to hide the values.
+        structure ([dict, list]): structure in which must to hide the values.
         secrets (list): key names
+        masked_value (str): replace with this value
 
     Returns:
         [list, dict]: new structure
     """
-    result = copy.deepcopy(value)
-    result = replace(result, secrets, MASKED_ATTRIBUTE_VALUE)
+    result = copy.deepcopy(structure)
+    result = replace(result, secrets, masked_value)
     return result
