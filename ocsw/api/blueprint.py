@@ -2,12 +2,16 @@ from ..utils.query_params import query_params
 
 
 class BlueprintApiMixin:
-    async def blueprints(self, path=None, **query):
+    async def blueprints(self, company_name=None, path=None, **query):
         """List blueprints.
 
         https://rest.octave.dev/#listing-company-blueprints
         """
-        url = self._url("{base_url}/{company_name}/blueprint")
+        ctx = dict()
+        if company_name:
+            ctx["company_name"] = company_name
+
+        url = self._url("{base_url}/{company_name}/blueprint", **ctx)
         params = query_params(**query)
         if path:
             params["path"] = path
