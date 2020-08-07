@@ -35,9 +35,7 @@ class TestConfig(unittest.TestCase):
                 {"not_secret": "hello"},
             ]
         }
-        ref = {
-            "secret": masked_value
-        }
+        ref = {"secret": masked_value}
 
         masked_data = mask_secrets(data, ["secret"], masked_value)
         self.assertEqual(masked_data, ref)

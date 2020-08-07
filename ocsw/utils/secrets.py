@@ -34,10 +34,10 @@ def replace(data, match, repl):
             key: repl if key in match else replace(value, match, repl)
             for key, value in data.items()
         }
-    elif isinstance(data, list):
+    if isinstance(data, list):
         return [replace(item, match, repl) for item in data]
-    else:
-        return data
+
+    return data
 
 
 def mask_secrets(structure, secrets, masked_value=MASKED_ATTRIBUTE_VALUE):

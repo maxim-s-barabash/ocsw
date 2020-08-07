@@ -38,8 +38,8 @@ def find_config_path(config_name, default="."):
     pwd = os.getcwd()
 
     while True:
-        p = os.path.join(pwd, config_name)
-        if os.path.exists(p):
+        path = os.path.join(pwd, config_name)
+        if os.path.exists(path):
             return os.path.realpath(pwd)
         pwd = os.path.dirname(pwd)
         if len(pwd) < 6:

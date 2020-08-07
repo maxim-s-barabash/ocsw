@@ -22,10 +22,10 @@
 
 import time
 
+
 def time_ms():
     """Number of milliseconds elapsed since January 1, 1970 00:00:00 UTC."""
     return int(round(time.time() * 1000))
-
 
 
 TIME_PERIODS = (

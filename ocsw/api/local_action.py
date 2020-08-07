@@ -34,17 +34,16 @@ class EdgeActionApiMixin:
         params = query_params(**query)
         return await self._get(url, params=params)
 
-    async def create_edge_action(self, source, js):
+    async def create_edge_action(self, source, js_body):
         """Update an Edge Action.
 
         https://rest.octave.dev/#creating-an-edge-action
         """
         url = self._url("{base_url}/{company_name}/local-action")
-        payload = dict(source=source, js=js)
         if not source.startswith("observation://"):
             msg = "Source always must start with observation:// not {source!r}"
             raise InvalidResource(msg)
-        payload = dict(source=source, js=js)
+        payload = dict(source=source, js=js_body)
         return await self._post(url, json=payload)
 
     async def remove_edge_action(self, action_id):

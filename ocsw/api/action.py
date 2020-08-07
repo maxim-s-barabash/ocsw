@@ -37,11 +37,11 @@ class ActionApiMixin:
     async def create_action(
         self,
         source,
-        js,
+        js_body,
         description=None,
         destination=None,
         disabled=False,
-        filter=None,
+        filter_test=None,
     ):
         """Update an Cloud Action.
 
@@ -50,26 +50,25 @@ class ActionApiMixin:
         description  string  optional. human-friendly description
         destination  string  optional. event output path.
         disabled     bool    is action disabled?
-        js           string  optional. javascript to execute.
+        js_body      string  optional. javascript to execute.
         source       string  required. path from which to read events.
-        filter       string  optional. a filter which is used as a pass/fail
+        filter_test  string  optional. a filter which is used as a pass/fail
                              test for evaluating whether to run
                              new events on the source stream through
                              the cloud action
         """
         url = self._url("{base_url}/{company_name}/action")
-        payload = dict(
-            source=source,
-            js=js,
-            description=description,
-            destination=destination,
-            disabled=disabled,
-            filter=filter,
-        )
         if source and source[0] not in "/@":
             msg = 'Source always must start with "/" or "@" not {source!r}'
             raise InvalidResource(msg)
-        payload = dict(source=source, js=js)
+        payload = dict(
+            source=source,
+            js=js_body,
+            description=description,
+            destination=destination,
+            disabled=disabled,
+            filter=filter_test,
+        )
         return await self._post(url, json=payload)
 
     async def remove_action(self, action_id):
