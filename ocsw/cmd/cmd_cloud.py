@@ -27,17 +27,33 @@ import yaml
 from ..utils.format_pretty_json import pprintj
 from ..utils.helpers import match_company_name
 
+LIMIT = 1000  # TODO: set from configure
 
-def save_edge_actions(base_path, company_name, edge_action):
+
+class Dumper(yaml.SafeDumper):
+    @staticmethod
+    def str_presenter(dumper, data):
+        if "\n" in data:  # check for multiline string
+            items = [item.rstrip() for item in data.splitlines()]
+            return dumper.represent_scalar(
+                "tag:yaml.org,2002:str", "\n".join(items), style="|"
+            )
+        return dumper.represent_scalar("tag:yaml.org,2002:str", data)
+
+
+Dumper.add_representer(str, Dumper.str_presenter)
+
+
+def save_edge_action(base_path, company_name, edge_action):
     name = edge_action.get("id")
     path = os.path.join(base_path, company_name, "edge_action", name)
     os.makedirs(path, exist_ok=True)
 
     # save action.js
     filename = os.path.join(path, "action.js")
-    js = edge_action.get("js", "")
+    js_body = edge_action.get("js", "")
     with open(filename, "wb") as fileptr:
-        fileptr.write(js.encode(encoding="utf-8"))
+        fileptr.write(js_body.encode(encoding="utf-8"))
 
     # save meta.yaml
     meta = dict(
@@ -48,12 +64,13 @@ def save_edge_actions(base_path, company_name, edge_action):
     )
     filename = os.path.join(path, "meta.yaml")
     with open(filename, "wb") as fileptr:
-        yaml.safe_dump(
+        yaml.dump(
             meta,
             fileptr,
             default_flow_style=False,
             allow_unicode=True,
             encoding="utf-8",
+            Dumper=Dumper,
         )
 
 
@@ -64,9 +81,9 @@ def save_cloud_action(base_path, company_name, cloud_action):
 
     # save action.js
     filename = os.path.join(path, "action.js")
-    js = cloud_action.get("js", "")
+    js_body = cloud_action.get("js", "")
     with open(filename, "wb") as fileptr:
-        fileptr.write(js.encode(encoding="utf-8"))
+        fileptr.write(js_body.encode(encoding="utf-8"))
 
     # save meta.yaml
     meta = dict(
@@ -77,13 +94,101 @@ def save_cloud_action(base_path, company_name, cloud_action):
     )
     filename = os.path.join(path, "meta.yaml")
     with open(filename, "wb") as fileptr:
-        yaml.safe_dump(
+        yaml.dump(
             meta,
             fileptr,
             default_flow_style=False,
             allow_unicode=True,
             encoding="utf-8",
+            Dumper=Dumper,
         )
+
+
+def save_blueprint(
+    base_path, company_name, blueprint, edge_package_index=None
+):
+    name = blueprint.get("id")
+    path = os.path.join(base_path, company_name, "blueprint", name)
+    os.makedirs(path, exist_ok=True)
+
+    blueprint_cp_props = [
+        "displayName",
+        "localActions",
+        "observations",
+        "state",
+        "version",
+    ]
+
+    meta = dict()
+    for key in blueprint_cp_props:
+        meta[key] = blueprint.get(key)
+    filename = os.path.join(path, "meta.yaml")
+    with open(filename, "wb") as fileptr:
+        yaml.dump(
+            meta,
+            fileptr,
+            default_flow_style=False,
+            allow_unicode=True,
+            encoding="utf-8",
+            Dumper=Dumper,
+        )
+    if edge_package_index:
+        edge_package = edge_package_index.get(blueprint.get("edgePackage"))
+        filename = os.path.join(path, "edgePackage.yaml")
+        with open(filename, "wb") as fileptr:
+            yaml.dump(
+                edge_package,
+                fileptr,
+                default_flow_style=False,
+                allow_unicode=True,
+                encoding="utf-8",
+                Dumper=Dumper,
+            )
+
+
+async def _fetch_edge_actions(client, base_path, companies):
+    for company in companies:
+        resp = await client.edge_actions(
+            fields=[], company_name=company["name"], limit=LIMIT
+        )
+        list_action = resp.get("body")
+        for action in list_action:
+            company_name = match_company_name(
+                companies, action.get("companyId", company)
+            )
+            save_edge_action(base_path, company_name, action)
+
+
+async def _fetch_cloud_actions(client, base_path, companies):
+    for company in companies:
+        resp = await client.actions(
+            fields=[], company_name=company["name"], limit=LIMIT
+        )
+        list_action = resp.get("body")
+        for action in list_action:
+            company_name = match_company_name(
+                companies, action.get("companyId", company)
+            )
+            save_cloud_action(base_path, company_name, action)
+
+
+async def _fetch_blueprints(client, base_path, companies):
+    resp = await client.firmwares()
+    data = resp.get("body")
+    edge_package_index = dict((item["id"], item) for item in data)
+
+    for company in companies:
+        resp = await client.blueprints(
+            fields=[], company_name=company["name"], limit=LIMIT
+        )
+        list_blueprint = resp.get("body")
+        for blueprint in list_blueprint:
+            company_name = match_company_name(
+                companies, blueprint.get("companyId", company)
+            )
+            save_blueprint(
+                base_path, company_name, blueprint, edge_package_index
+            )
 
 
 async def cmd_cloud_fetch(
@@ -99,30 +204,17 @@ async def cmd_cloud_fetch(
 
     companies = [client.current_company]
     if get_all:
-        companies = [item["name"] for item in list_companies]
+        companies = list_companies
+    else:
+        companies = [
+            item
+            for item in list_companies
+            if client.current_company in item.values()
+        ]
 
-    for company in companies:
-        resp = await client.edge_actions(
-            fields=[], company_name=company, limit=1000
-        )
-        list_action = resp.get("body")
-        for action in list_action:
-            company_name = match_company_name(
-                list_companies, action.get("companyId", company)
-            )
-            save_edge_actions(base_path, company_name, action)
-
-    for company in companies:
-        resp = await client.actions(
-            fields=[], company_name=company, limit=2000
-        )
-        list_action = resp.get("body")
-        pprintj(list_action)
-        for action in list_action:
-            company_name = match_company_name(
-                list_companies, action.get("companyId", company)
-            )
-            save_cloud_action(base_path, company_name, action)
+    await _fetch_edge_actions(client, base_path, companies)
+    await _fetch_cloud_actions(client, base_path, companies)
+    await _fetch_blueprints(client, base_path, companies)
 
 
 def init_cli(subparsers):
