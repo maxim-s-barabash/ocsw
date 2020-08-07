@@ -22,16 +22,10 @@
 
 import time
 
-try:
-    from time import time_ns as _time_ns
-except ImportError:
+def time_ms():
+    """Number of milliseconds elapsed since January 1, 1970 00:00:00 UTC."""
+    return int(round(time.time() * 1000))
 
-    def time_ns():
-        return int(round(time.time() * 1000))
-
-
-else:
-    time_ns = _time_ns
 
 
 TIME_PERIODS = (
@@ -56,12 +50,12 @@ def distance_in_words_to_now(timestamp):
     """Human readable approximate timestamp converter like "~ 1s" '~ 2months'.
 
     Args:
-        timestamp (int): ns unixtime
+        timestamp (int): milliseconds unixtime
 
     Returns:
         str: the distance in words
     """
-    current_time = time_ns()
+    current_time = time_ms()
     if not timestamp:
         return ""
     return human_delta_time(current_time - timestamp)
@@ -71,7 +65,7 @@ def human_delta_time(delta):
     """Human readable approximate delta time converter like '~ 1s' '~ 2months'.
 
     Args:
-        delta (int): ns time delta between now and then
+        delta (int): milliseconds time delta between now and then
 
     Returns:
         str: approximate time
