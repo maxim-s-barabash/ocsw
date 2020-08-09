@@ -24,7 +24,6 @@ import os
 
 import yaml
 
-from ..utils.format_pretty_json import pprintj
 from ..utils.helpers import match_company_name
 
 LIMIT = 1000  # TODO: set from configure

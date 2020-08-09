@@ -27,9 +27,12 @@ Applying Blueprints the same settings to multiple devices.
 """
 
 import asyncio
+import difflib
 
 from ..utils import render
-from ..utils.format_pretty_json import pprintj
+from ..utils.color_diff import color_diff
+from ..utils.format_date import ISO_8601, format_date
+from ..utils.format_pretty_json import pformatj, pprintj
 from ..utils.table import ObjTable
 
 
@@ -83,6 +86,36 @@ async def cmd_blueprint_ls(client, **_kwargs):
     print(table)
 
 
+async def cmd_blueprint_diff(
+    client, blueprint_id, version_number=None, **_kwargs
+):
+    to_data_resp = await client.inspect_blueprint(
+        blueprint_id, version_number=version_number
+    )
+    to_data = to_data_resp.get("body")
+    to_version = to_data.get("version")
+
+    from_version = max(1, to_version - 1)
+
+    from_data_resp = await client.inspect_blueprint(
+        blueprint_id, version_number=from_version
+    )
+    from_data = from_data_resp.get("body")
+
+    diff = difflib.unified_diff(
+        pformatj(from_data).splitlines(keepends=True),
+        pformatj(to_data).splitlines(keepends=True),
+        fromfile="{id}_v{version}_{displayName}".format(**from_data),
+        tofile="{id}_v{version}_{displayName}".format(**to_data),
+        fromfiledate=format_date(
+            from_data.get("lastEditDate"), template=ISO_8601
+        ),
+        tofiledate=format_date(to_data.get("lastEditDate"), template=ISO_8601),
+    )
+
+    print("".join(color_diff(diff)))
+
+
 def init_cli(subparsers):
     prompt = "Manage blueprints"
     parser = subparsers.add_parser(
@@ -108,4 +141,20 @@ def init_cli(subparsers):
     )
     parser_inspect.add_argument(
         "blueprints", metavar="BLUEPRINT", nargs="+", help="blueprint id"
+    )
+
+    # DIFF
+    parser_diff = sub.add_parser(
+        "diff", help="differences between blueprint versions"
+    )
+    parser_diff.set_defaults(func=cmd_blueprint_diff)
+    parser_diff.add_argument(
+        "-v",
+        "--version",
+        dest="version_number",
+        type=int,
+        help="version of the cloud action",
+    )
+    parser_diff.add_argument(
+        "blueprint_id", metavar="ACTION", help="blueprint id",
     )
