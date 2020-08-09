@@ -10,11 +10,9 @@ class FirmwareApiMixin:
         company_name = company_name or self.current_company
 
         resource = "{base_url}/firmware"
-        ctx = dict()
         if company_name:
-            ctx["company_name"] = company_name
             resource = "{base_url}/{company_name}/firmware"
 
-        url = self._url(resource, **ctx)
+        url = self._url(resource, company_name=company_name)
         params = query_params(**query)
         return await self._get(url, params=params)
