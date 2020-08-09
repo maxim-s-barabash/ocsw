@@ -33,8 +33,20 @@ from ..utils.format_pretty_json import pprintj
 from ..utils.table import ObjTable
 
 
-async def cmd_blueprint_inspect(client, blueprints, **_kwargs):
-    futures = [client.inspect_blueprint(uid) for uid in blueprints]
+async def cmd_blueprint_inspect(
+    client, blueprints, version_number=None, **_kwargs
+):
+    """Display detailed information on one or more blueprints.
+
+    Args:
+        client (ocsw.api.client.APIClient): APIClient
+        blueprints (list): list of blueprints id
+        version_number (int): version of the requested object
+    """
+    futures = [
+        client.inspect_blueprint(uid, version_number=version_number)
+        for uid in blueprints
+    ]
     items = [resp.get("body") for resp in await asyncio.gather(*futures)]
     pprintj(items)
 
@@ -87,6 +99,13 @@ def init_cli(subparsers):
         help="display detailed information on one or more blueprints",
     )
     parser_inspect.set_defaults(func=cmd_blueprint_inspect)
+    parser_inspect.add_argument(
+        "-v",
+        "--version",
+        dest="version_number",
+        type=int,
+        help="version of the cloud action",
+    )
     parser_inspect.add_argument(
         "blueprints", metavar="BLUEPRINT", nargs="+", help="blueprint id"
     )

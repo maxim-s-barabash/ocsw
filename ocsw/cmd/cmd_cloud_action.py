@@ -27,14 +27,20 @@ from ..utils.format_pretty_json import pprintj
 from ..utils.table import ObjTable
 
 
-async def cmd_cloud_actions_inspect(client, cloud_actions, **_kwargs):
+async def cmd_cloud_actions_inspect(
+    client, cloud_actions, version_number=None, **_kwargs
+):
     """Display detailed information on one or more cloud actions.
 
     Args:
         client (ocsw.api.client.APIClient): APIClient
         cloud_actions (list): list of cloud actions id
+        version_number (int): version of the requested object
     """
-    futures = [client.inspect_action(uid) for uid in cloud_actions]
+    futures = [
+        client.inspect_action(uid, version_number=version_number)
+        for uid in cloud_actions
+    ]
     items = [resp.get("body") for resp in await asyncio.gather(*futures)]
     pprintj(items)
 
@@ -90,6 +96,13 @@ def init_cli(subparsers):
         help="display detailed information on one or more cloud actions",
     )
     parser_inspect.set_defaults(func=cmd_cloud_actions_inspect)
+    parser_inspect.add_argument(
+        "-v",
+        "--version",
+        dest="version_number",
+        type=int,
+        help="version of the cloud action",
+    )
     parser_inspect.add_argument(
         "cloud_actions", metavar="ACTION", nargs="+", help="cloud action id",
     )

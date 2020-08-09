@@ -28,14 +28,20 @@ from ..utils.helpers import get
 from ..utils.table import ObjTable
 
 
-async def cmd_edge_actions_inspect(client, edge_actions, **_kwargs):
+async def cmd_edge_actions_inspect(
+    client, edge_actions, version_number=None, **_kwargs
+):
     """Display detailed information on one or more edge actions.
 
     Args:
         client (ocsw.api.client.APIClient): APIClient
         edge_actions (list): list of edge actions id
+        version_number (int): version of the requested object
     """
-    futures = [client.inspect_edge_action(uid) for uid in edge_actions]
+    futures = [
+        client.inspect_edge_action(uid, version_number=version_number)
+        for uid in edge_actions
+    ]
     items = [resp.get("body") for resp in await asyncio.gather(*futures)]
     pprintj(items)
 
@@ -95,6 +101,13 @@ def init_cli(subparsers):
         help="display detailed information on one or more edge actions",
     )
     parser_inspect.set_defaults(func=cmd_edge_actions_inspect)
+    parser_inspect.add_argument(
+        "-v",
+        "--version",
+        dest="version_number",
+        type=int,
+        help="version of the cloud action",
+    )
     parser_inspect.add_argument(
         "edge_actions", metavar="ACTION", nargs="+", help="edge action id",
     )
