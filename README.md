@@ -3,7 +3,7 @@
 [![Build Status](https://travis-ci.com/maxim-s-barabash/ocsw.svg?branch=master)](https://travis-ci.com/maxim-s-barabash/ocsw)
 [![PyPI version](https://badge.fury.io/py/ocsw.svg)](https://badge.fury.io/py/ocsw)
 [![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](https://opensource.org/licenses/MIT)
-
+[![codecov](https://codecov.io/gh/maxim-s-barabash/ocsw/branch/master/graph/badge.svg)](https://codecov.io/gh/maxim-s-barabash/ocsw)
 
 This is not an official implementation of the command line interface (CLI) for 
 the [Octave Cloud REST API](https://octave-api.sierrawireless.io/v5.0).
