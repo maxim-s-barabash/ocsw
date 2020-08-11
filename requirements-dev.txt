@@ -5,4 +5,5 @@ flake8
 bandit
 isort
 pytest
+pytest-cov
 radon
