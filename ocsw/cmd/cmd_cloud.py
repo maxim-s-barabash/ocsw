@@ -18,9 +18,11 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
-"""Manage Cloud."""
+"""WIP Manage Cloud."""
 
+import asyncio
 import os
+import shutil
 
 import yaml
 
@@ -44,74 +46,27 @@ Dumper.add_representer(str, Dumper.str_presenter)
 
 
 def save_edge_action(base_path, company_name, edge_action):
-    name = edge_action.get("id")
+    name = "{description}__{id}".format(**edge_action)
     path = os.path.join(base_path, company_name, "edge_action", name)
-    os.makedirs(path, exist_ok=True)
-
-    # save action.js
-    filename = os.path.join(path, "action.js")
-    js_body = edge_action.get("js", "")
-    with open(filename, "wb") as fileptr:
-        fileptr.write(js_body.encode(encoding="utf-8"))
-
-    # save meta.yaml
-    meta = dict(
-        disabled=edge_action.get("disabled", True),
-        source=edge_action.get("source", ""),
-        description=edge_action.get("description", ""),
-        version=edge_action.get("version", 1),
-    )
-    filename = os.path.join(path, "meta.yaml")
-    with open(filename, "wb") as fileptr:
-        yaml.dump(
-            meta,
-            fileptr,
-            default_flow_style=False,
-            allow_unicode=True,
-            encoding="utf-8",
-            Dumper=Dumper,
-        )
+    export_action(path, edge_action)
 
 
 def save_cloud_action(base_path, company_name, cloud_action):
-    name = cloud_action.get("id")
+    name = "{description}__{id}".format(**cloud_action)
     path = os.path.join(base_path, company_name, "cloud_action", name)
-    os.makedirs(path, exist_ok=True)
-
-    # save action.js
-    filename = os.path.join(path, "action.js")
-    js_body = cloud_action.get("js", "")
-    with open(filename, "wb") as fileptr:
-        fileptr.write(js_body.encode(encoding="utf-8"))
-
-    # save meta.yaml
-    meta = dict(
-        disabled=cloud_action.get("disabled", True),
-        source=cloud_action.get("source", ""),
-        description=cloud_action.get("description", ""),
-        version=cloud_action.get("version", 1),
-    )
-    filename = os.path.join(path, "meta.yaml")
-    with open(filename, "wb") as fileptr:
-        yaml.dump(
-            meta,
-            fileptr,
-            default_flow_style=False,
-            allow_unicode=True,
-            encoding="utf-8",
-            Dumper=Dumper,
-        )
+    export_action(path, cloud_action)
 
 
 def save_blueprint(
     base_path, company_name, blueprint, edge_package_index=None
 ):
-    name = blueprint.get("id")
+    name = "{displayName}__{id}".format(**blueprint)
     path = os.path.join(base_path, company_name, "blueprint", name)
     os.makedirs(path, exist_ok=True)
 
     blueprint_cp_props = [
         "displayName",
+        "edgePackage",
         "localActions",
         "observations",
         "state",
@@ -196,6 +151,8 @@ async def cmd_cloud_fetch(
     """Download objects and refs from cloud."""
     workdir = os.path.dirname(os.path.join(config_path, config_filename))
     base_path = os.path.join(workdir, "company")
+    os.makedirs(base_path, exist_ok=True)
+    shutil.rmtree(base_path, ignore_errors=False, onerror=None)
 
     # get all companies
     resp = await client.companies(field=["id", "name"])
@@ -216,6 +173,153 @@ async def cmd_cloud_fetch(
     await _fetch_blueprints(client, base_path, companies)
 
 
+def get_template_filename4blueprint(items):
+    values = [item["displayName"] for item in items]
+    uniq_description = len(set(values)) == len(values)
+    return "{displayName}" if uniq_description else "{displayName}__{id}"
+
+
+def get_template_filename4actions(items):
+    values = [item["description"] for item in items]
+    uniq_description = len(set(values)) == len(values)
+    return "{description}" if uniq_description else "{description}__{id}"
+
+
+def export_action(outpath, action):
+    os.makedirs(outpath, exist_ok=True)
+
+    # save action.js
+    filename = os.path.join(outpath, "action.js")
+    js_body = action.get("js", "")
+    with open(filename, "wb") as fileptr:
+        fileptr.write(js_body.encode(encoding="utf-8"))
+
+    # save meta.yaml
+    meta = dict(
+        disabled=action.get("disabled", True),
+        source=action.get("source", ""),
+        description=action.get("description", ""),
+        version=action.get("version", 1),
+    )
+    filename = os.path.join(outpath, "meta.yaml")
+    with open(filename, "wb") as fileptr:
+        yaml.dump(
+            meta,
+            fileptr,
+            default_flow_style=False,
+            allow_unicode=True,
+            encoding="utf-8",
+            Dumper=Dumper,
+        )
+
+
+def export_blueprint(outpath, blueprint):
+    os.makedirs(outpath, exist_ok=True)
+
+    meta = blueprint
+    filename = os.path.join(outpath, "meta.yaml")
+    with open(filename, "wb") as fileptr:
+        yaml.dump(
+            meta,
+            fileptr,
+            default_flow_style=False,
+            allow_unicode=True,
+            encoding="utf-8",
+            Dumper=Dumper,
+        )
+
+
+def export_edge_package(outpath, edge_package):
+    os.makedirs(outpath, exist_ok=True)
+    filename = os.path.join(outpath, "edgePackage.yaml")
+    with open(filename, "wb") as fileptr:
+        yaml.dump(
+            edge_package,
+            fileptr,
+            default_flow_style=False,
+            allow_unicode=True,
+            encoding="utf-8",
+            Dumper=Dumper,
+        )
+
+
+async def get_edge_package_index(client, company_name=None):
+    resp = await client.firmwares(company_name=company_name)
+    data = resp.get("body")
+    return dict((item["id"], item) for item in data)
+
+
+async def get_local_actions4blueprint(client, company_name, blueprint):
+    futures = [
+        client.inspect_edge_action(
+            action_id,
+            version_number=action_v["version"],
+            company_name=company_name,
+        )
+        for action_id, action_v in blueprint.get("localActions", {}).items()
+    ]
+    return [resp.get("body") for resp in await asyncio.gather(*futures)]
+
+
+async def _export_blueprints(client, company_name=None, outpath="."):
+    resp = await client.blueprints(company_name=company_name, limit=LIMIT)
+    edge_package_index = await get_edge_package_index(
+        client, company_name=company_name
+    )
+
+    list_blueprint = resp.get("body")
+    template_filename4blueprint = get_template_filename4blueprint(
+        list_blueprint
+    )
+    for blueprint in list_blueprint:
+        blueprint_name = template_filename4blueprint.format(**blueprint)
+        blueprint_path = os.path.join(outpath, blueprint_name)
+        export_blueprint(blueprint_path, blueprint)
+        edge_package_id = blueprint.get("edgePackage")
+        if edge_package_id:
+            edge_package = edge_package_index.get(edge_package_id)
+            export_edge_package(blueprint_path, edge_package)
+
+        actions = await get_local_actions4blueprint(
+            client, company_name, blueprint
+        )
+
+        template_filename4actions = get_template_filename4actions(actions)
+        for action in actions:
+            actions_path = os.path.join(blueprint_path, "localActions")
+            action_name = template_filename4actions.format(**action)
+            action_path = os.path.join(actions_path, action_name)
+            export_action(action_path, action)
+
+
+async def cmd_cloud_export(client, config_path, get_all=False, **_kwargs):
+    """Download objects and refs from cloud."""
+    prj_path = os.path.dirname(os.path.join(config_path, ".."))
+
+    # get all companies
+    resp = await client.companies(field=["id", "name"])
+    list_companies = resp.get("body")
+
+    if get_all:
+        companies = list_companies
+    else:
+        companies = [
+            item
+            for item in list_companies
+            if client.current_company in item.values()
+        ]
+    companies_name = [uid["name"] for uid in companies]
+
+    for company_name in companies_name:
+        base_path = os.path.join(prj_path, "companies", company_name)
+        outpath = os.path.join(base_path, "blueprints")
+        os.makedirs(outpath, exist_ok=True)
+        shutil.rmtree(outpath, ignore_errors=False, onerror=None)
+        await _export_blueprints(
+            client, company_name=company_name, outpath=outpath
+        )
+
+
 def init_cli(subparsers):
     prompt = "Manage Cloud"
     parser = subparsers.add_parser("cloud", help=prompt, description=prompt)
@@ -228,6 +332,18 @@ def init_cli(subparsers):
     )
     parser_fetch.set_defaults(func=cmd_cloud_fetch)
     parser_fetch.add_argument(
+        "--all",
+        action="store_true",
+        dest="get_all",
+        help="from all companies",
+    )
+
+    # FETCH
+    parser_export = sub.add_parser(
+        "export", help="download objects and refs from cloud",
+    )
+    parser_export.set_defaults(func=cmd_cloud_export)
+    parser_export.add_argument(
         "--all",
         action="store_true",
         dest="get_all",
