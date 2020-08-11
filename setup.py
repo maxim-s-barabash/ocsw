@@ -37,8 +37,8 @@ setup(
     maintainer_email=ME_EMAIL,
     url="https://github.com/maxim-s-barabash/ocsw",
     project_urls={
-        "Source": "https://github.com/maxim-s-barabas/ocsw",
-        "Tracker": "https://github.com/maxim-s-barabas/ocsw/issues",
+        "Source": "https://github.com/maxim-s-barabash/ocsw",
+        "Tracker": "https://github.com/maxim-s-barabash/ocsw/issues",
     },
     license="MIT License",
     keywords=["IoT", "octave", "cloud", "cli"],
