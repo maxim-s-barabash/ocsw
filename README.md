@@ -83,6 +83,7 @@ positional arguments:
   COMMAND
     ls        display blueprint list
     inspect   display detailed information on one or more blueprints
+    diff      differences between blueprint versions
 
 optional arguments:
   -h, --help  show this help message and exit
@@ -96,6 +97,7 @@ Manage Cloud
 positional arguments:
   COMMAND
     fetch     download objects and refs from cloud
+    export    download objects and refs from cloud
 
 optional arguments:
   -h, --help  show this help message and exit
@@ -110,6 +112,7 @@ positional arguments:
   COMMAND
     inspect   display detailed information on one or more cloud actions
     ls        list cloud action
+    diff      differences in javascript between cloud action versions
 
 optional arguments:
   -h, --help  show this help message and exit
@@ -161,6 +164,7 @@ positional arguments:
   COMMAND
     inspect   display detailed information on one or more edge actions
     ls        list edge action
+    diff      differences in javascript between edge action versions
 
 optional arguments:
   -h, --help  show this help message and exit
@@ -169,7 +173,7 @@ optional arguments:
 ```
 usage: ocsw-cli firmware [-h] COMMAND ...
 
-Manage firmwares
+Manage firmware
 
 positional arguments:
   COMMAND
