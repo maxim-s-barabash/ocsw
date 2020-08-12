@@ -1,4 +1,4 @@
-# ocsw-cli - Octave Cloud command-line tool
+# ocsw-cli - Octave Cloud IoT command-line tool
 
 [![Build Status](https://travis-ci.com/maxim-s-barabash/ocsw.svg?branch=master)](https://travis-ci.com/maxim-s-barabash/ocsw)
 [![PyPI version](https://badge.fury.io/py/ocsw.svg)](https://badge.fury.io/py/ocsw)
