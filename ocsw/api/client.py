@@ -34,6 +34,7 @@ from ..constants import (
 from .action import ActionApiMixin
 from .blueprint import BlueprintApiMixin
 from .company import CompanyApiMixin
+from .connector import ConnectorApiMixin
 from .device import DeviceApiMixin
 from .event import EventApiMixin
 from .firmware import FirmwareApiMixin
@@ -48,6 +49,7 @@ class APIClient(
     ActionApiMixin,
     BlueprintApiMixin,
     CompanyApiMixin,
+    ConnectorApiMixin,
     DeviceApiMixin,
     EventApiMixin,
     FirmwareApiMixin,
