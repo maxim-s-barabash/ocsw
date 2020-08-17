@@ -17,7 +17,7 @@ def color_diff(diff):
             yield Fore.GREEN + line + Fore.RESET
         elif line.startswith("-"):
             yield Fore.RED + line + Fore.RESET
-        elif line.startswith("^"):
+        elif line.startswith("?"):
             yield Fore.BLUE + line + Fore.RESET
         elif line.startswith("@@ "):
             yield Style.BRIGHT + line + Style.RESET_ALL
