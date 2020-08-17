@@ -292,6 +292,18 @@ async def _export_blueprints(client, company_name=None, outpath="."):
             export_action(action_path, action)
 
 
+async def _export_cloud_actions(client, company_name=None, outpath="."):
+    resp = await client.actions(company_name=company_name, limit=LIMIT)
+    actions = resp.get("body")
+
+    template_filename4actions = get_template_filename4actions(actions)
+    for action in actions:
+        for action in actions:
+            action_name = template_filename4actions.format(**action)
+            action_path = os.path.join(outpath, action_name)
+            export_action(action_path, action)
+
+
 async def cmd_cloud_export(client, config_path, get_all=False, **_kwargs):
     """Download objects and refs from cloud."""
     prj_path = os.path.dirname(os.path.join(config_path, ".."))
@@ -312,10 +324,18 @@ async def cmd_cloud_export(client, config_path, get_all=False, **_kwargs):
 
     for company_name in companies_name:
         base_path = os.path.join(prj_path, "companies", company_name)
+        # export blueprints
         outpath = os.path.join(base_path, "blueprints")
         os.makedirs(outpath, exist_ok=True)
         shutil.rmtree(outpath, ignore_errors=False, onerror=None)
         await _export_blueprints(
+            client, company_name=company_name, outpath=outpath
+        )
+        # export cloud actions
+        outpath = os.path.join(base_path, "cloud_actions")
+        os.makedirs(outpath, exist_ok=True)
+        shutil.rmtree(outpath, ignore_errors=False, onerror=None)
+        await _export_cloud_actions(
             client, company_name=company_name, outpath=outpath
         )
 
