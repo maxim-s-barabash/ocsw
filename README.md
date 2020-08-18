@@ -117,6 +117,21 @@ positional arguments:
 optional arguments:
   -h, --help  show this help message and exit
 ```
+## Command: cloud_connector
+```
+usage: ocsw-cli cloud_connector [-h] COMMAND ...
+
+Manage cloud connectors
+
+positional arguments:
+  COMMAND
+    inspect   display detailed information on one or more cloud connectors
+    ls        list cloud connector
+    diff      differences in javascript between cloud connector versions
+
+optional arguments:
+  -h, --help  show this help message and exit
+```
 ## Command: company
 ```
 usage: ocsw-cli company [-h] COMMAND ...
