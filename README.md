@@ -32,6 +32,18 @@ As per usual:
 pip install ocsw
 ```
 
+## Start project
+```shell
+mkdir ocsw-project
+cd ocsw-project/
+ocsw-cli login
+Login with your token from Octave Cloud. If you don't have a token, head over to https://octave.sierrawireless.io/ to create one.
+User name: me_user_name
+Token: 
+WARNING! Your token will be stored unencrypted in ./ocsw-project/.octave/config.json.
+```
+
+
 ## Environment variables
 
 | VARIABLE             | Description                                        |
