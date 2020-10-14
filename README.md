@@ -38,21 +38,10 @@ mkdir ocsw-project
 cd ocsw-project/
 ocsw-cli login
 Login with your token from Octave Cloud. If you don't have a token, head over to https://octave.sierrawireless.io/ to create one.
-User name: me_user_name
+User name: user_name
 Token: 
 WARNING! Your token will be stored unencrypted in ./ocsw-project/.octave/config.json.
 ```
-
-
-## Environment variables
-
-| VARIABLE             | Description                                        |
-|----------------------|----------------------------------------------------|
-| OCTAVE_CLOUD_API_URL | default: https://octave-api.sierrawireless.io/v5.0<br>End point octave cloud |
-| OCTAVE_CLOUD_TOKEN   | Master Token                                       |
-| OCTAVE_CLOUD_USER    | Your user id                                       |
-| OCTAVE_CLOUD_COMPANY | Identifier of one of the company                   |
-
 
 ## Usage
 ```
@@ -294,3 +283,13 @@ Display Octave API Version Information
 optional arguments:
   -h, --help  show this help message and exit
 ```
+
+
+## Environment variables
+
+| VARIABLE             | Description                                        |
+|----------------------|----------------------------------------------------|
+| OCTAVE_CLOUD_API_URL | default: https://octave-api.sierrawireless.io/v5.0<br>End point octave cloud |
+| OCTAVE_CLOUD_TOKEN   | Master Token                                       |
+| OCTAVE_CLOUD_USER    | Your user id                                       |
+| OCTAVE_CLOUD_COMPANY | Identifier of one of the company                   |
