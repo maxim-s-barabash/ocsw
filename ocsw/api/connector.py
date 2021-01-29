@@ -128,7 +128,11 @@ class ConnectorApiMixin:
         return await self._delete(url)
 
     async def update_connector(
-        self, object_id, fields=None, props=None, company_name=None,
+        self,
+        object_id,
+        fields=None,
+        props=None,
+        company_name=None,
     ):
         """Updating a Cloud Connectors.
 

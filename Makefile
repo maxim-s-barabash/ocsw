@@ -1,6 +1,6 @@
 checkfiles = ocsw/ tests/ setup.py
 black_opts = -l 79 -t py36 --quiet
-isort_opts = -w 79 -y -m 3 -tc
+isort_opts = -w 79 -m 3 --tc
 bandit_opts = -s B322,B102 -x tests --silent
 mypy_opts = --ignore-missing-imports
 py_warn = PYTHONDEVMODE=1
@@ -19,10 +19,10 @@ help:
 
 
 deps:
-	@pip3 install -r requirements.txt -r requirements-dev.txt
+	@pip3 install -U -r requirements.txt -r requirements-dev.txt
 
 style:
-	@isort $(isort_opts)
+	@isort $(isort_opts) $(checkfiles)
 	@black $(black_opts) $(checkfiles)
 
 check:

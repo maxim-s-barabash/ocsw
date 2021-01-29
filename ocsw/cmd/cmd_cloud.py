@@ -348,7 +348,8 @@ def init_cli(subparsers):
 
     # FETCH
     parser_fetch = sub.add_parser(
-        "fetch", help="download objects and refs from cloud",
+        "fetch",
+        help="download objects and refs from cloud",
     )
     parser_fetch.set_defaults(func=cmd_cloud_fetch)
     parser_fetch.add_argument(
@@ -360,7 +361,8 @@ def init_cli(subparsers):
 
     # FETCH
     parser_export = sub.add_parser(
-        "export", help="download objects and refs from cloud",
+        "export",
+        help="download objects and refs from cloud",
     )
     parser_export.set_defaults(func=cmd_cloud_export)
     parser_export.add_argument(

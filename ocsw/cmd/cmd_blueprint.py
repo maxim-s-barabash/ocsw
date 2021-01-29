@@ -156,5 +156,7 @@ def init_cli(subparsers):
         help="version of the cloud action",
     )
     parser_diff.add_argument(
-        "blueprint_id", metavar="ACTION", help="blueprint id",
+        "blueprint_id",
+        metavar="ACTION",
+        help="blueprint id",
     )

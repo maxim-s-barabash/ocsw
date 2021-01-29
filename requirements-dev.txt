@@ -6,4 +6,5 @@ bandit
 isort
 pytest
 pytest-cov
+pytest_mock
 radon

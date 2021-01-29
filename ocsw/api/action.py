@@ -105,7 +105,11 @@ class ActionApiMixin:
         return await self._delete(url)
 
     async def update_action(
-        self, object_id, fields=None, props=None, company_name=None,
+        self,
+        object_id,
+        fields=None,
+        props=None,
+        company_name=None,
     ):
         """Updating a Cloud Action.
 

@@ -136,7 +136,10 @@ def init_cli(subparsers):
         help="version of the cloud connector",
     )
     parser_inspect.add_argument(
-        "cloud_connectors", metavar="ACTION", nargs="+", help="cloud connector id",
+        "cloud_connectors",
+        metavar="ACTION",
+        nargs="+",
+        help="cloud connector id",
     )
 
     # LS
@@ -145,7 +148,8 @@ def init_cli(subparsers):
 
     # DIFF
     parser_diff = sub.add_parser(
-        "diff", help="differences in javascript between cloud connector versions"
+        "diff",
+        help="differences in javascript between cloud connector versions",
     )
     parser_diff.set_defaults(func=cmd_cloud_connectors_diff)
     parser_diff.add_argument(
@@ -156,5 +160,7 @@ def init_cli(subparsers):
         help="version of the cloud connector",
     )
     parser_diff.add_argument(
-        "cloud_action", metavar="ACTION", help="cloud connector id",
+        "cloud_action",
+        metavar="ACTION",
+        help="cloud connector id",
     )

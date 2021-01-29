@@ -140,7 +140,10 @@ def init_cli(subparsers):
         help="version of the cloud action",
     )
     parser_inspect.add_argument(
-        "edge_actions", metavar="ACTION", nargs="+", help="edge action id",
+        "edge_actions",
+        metavar="ACTION",
+        nargs="+",
+        help="edge action id",
     )
 
     # LS
@@ -160,5 +163,7 @@ def init_cli(subparsers):
         help="version of the cloud action",
     )
     parser_diff.add_argument(
-        "edge_action", metavar="ACTION", help="edge action id",
+        "edge_action",
+        metavar="ACTION",
+        help="edge action id",
     )

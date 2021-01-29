@@ -1,5 +1,5 @@
 try:
-    from colorama import Fore, Back, Style, init
+    from colorama import Back, Fore, Style, init
 
     init()
 except ImportError:  # fallback so that the imported classes always exist

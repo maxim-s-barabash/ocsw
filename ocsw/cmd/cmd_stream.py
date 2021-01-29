@@ -105,7 +105,10 @@ async def cmd_stream_events_list(client, stream, **_kwargs):
         dict(field="elems", title="elems", width=65),
     ]
 
-    table = ObjTable(data=data, columns=columns,)
+    table = ObjTable(
+        data=data,
+        columns=columns,
+    )
     print(table)
 
 

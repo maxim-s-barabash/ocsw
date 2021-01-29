@@ -130,8 +130,7 @@ class DeviceApiMixin:
     async def device_events(
         self, device_identifier, company_name=None, **query
     ):
-        """
-        """
+        """"""
         url = self._url(
             "{base_url}/{company_name}/device/events/{device_identifier}",
             company_name=company_name or self.current_company,
