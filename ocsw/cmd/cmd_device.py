@@ -43,7 +43,7 @@ async def cmd_devices_inspect(client, devices, **_kwargs):
     pprintj(items)
 
 
-async def cmd_device_ls(client, show_tags, **_kwargs):
+async def cmd_device_ls(client, show_tags, limit, start, **_kwargs):
     """List devices connectivity."""
     fields = [
         "id",
@@ -89,14 +89,14 @@ async def cmd_device_ls(client, show_tags, **_kwargs):
         fields.append("tags")
         columns.append(dict(field="tags", title="TAGS"))
 
-    resp = await client.devices(fields=fields)
+    resp = await client.devices(fields=fields, limit=limit, start=start)
     data = resp.get("body")
 
     table = ObjTable(data=data, columns=columns)
     print(table)
 
 
-async def cmd_device_lc(client, show_tags, **_kwargs):
+async def cmd_device_lc(client, show_tags, limit, start, **_kwargs):
     """List devices configuration."""
     fields = [
         "id",
@@ -153,7 +153,9 @@ async def cmd_device_lc(client, show_tags, **_kwargs):
         columns.append(dict(field="tags", title="TAGS"))
 
     # devices
-    devices_resp = await client.devices(fields=fields)
+    devices_resp = await client.devices(
+        fields=fields, limit=limit, start=start
+    )
     devices_data = devices_resp.get("body")
     # blueprints
     blueprints_resp = await client.blueprints(fields=["id", "displayName"])
@@ -171,7 +173,7 @@ async def cmd_device_lc(client, show_tags, **_kwargs):
     print(table)
 
 
-async def cmd_device_li(client, show_tags, **_kwargs):
+async def cmd_device_li(client, show_tags, limit, start, **_kwargs):
     """List devices identity."""
     fields = [
         "id",
@@ -206,9 +208,8 @@ async def cmd_device_li(client, show_tags, **_kwargs):
         fields.append("tags")
         columns.append(dict(field="tags", title="TAGS"))
 
-    resp = await client.devices(fields=fields)
+    resp = await client.devices(fields=fields, limit=limit, start=start)
     data = resp.get("body")
-
     futures = [
         client.events(
             f'/{client.current_company}/devices/{item["name"]}/:inbox',
@@ -279,8 +280,10 @@ async def cmd_device_tags(client, device_identifier, tags, **_kwargs):
     pprintj(resp)
 
 
-async def cmd_device_recent_events(client, device_identifier, **_kwargs):
-
+async def cmd_device_recent_events(
+    client, device_identifier, limit, start, **_kwargs
+):
+    """List devices recent events."""
     resp = await client.inspect_device(
         device_identifier, fields=["id", "name", "path"]
     )
@@ -289,6 +292,8 @@ async def cmd_device_recent_events(client, device_identifier, **_kwargs):
 
     resp = await client.device_events(
         device_identifier,
+        limit=limit,
+        start=start,
         fields=["elems", "creationDate", "path"],
         filters=f'path!="{device_path}/:inbox"',
         sort="creationDate",
@@ -316,8 +321,10 @@ async def cmd_device_recent_events(client, device_identifier, **_kwargs):
     print(table)
 
 
-async def cmd_device_recent_changes(client, device_identifier, **_kwargs):
-
+async def cmd_device_recent_changes(
+    client, device_identifier, limit, start, **_kwargs
+):
+    """List devices recent changes events."""
     resp = await client.inspect_device(
         device_identifier, fields=["id", "name", "path"]
     )
@@ -326,6 +333,8 @@ async def cmd_device_recent_changes(client, device_identifier, **_kwargs):
 
     resp = await client.events(
         f"{device_path}/:inbox",
+        limit=limit,
+        start=start,
         fields=["elems", "creationDate", "path"],
         sort="creationDate",
         order="desc",
@@ -405,6 +414,22 @@ def init_cli(subparsers):
         action="store_true",
         help="show device tags",
     )
+    parser_lc.add_argument(
+        "-l",
+        "--limit",
+        dest="limit",
+        type=int,
+        help="maximum response size",
+        default=20,
+    )
+    parser_lc.add_argument(
+        "-s",
+        "--start",
+        dest="start",
+        type=int,
+        help="start index of the search",
+        default=0,
+    )
 
     # LI
     parser_li = sub.add_parser("li", help="list devices identity")
@@ -416,6 +441,23 @@ def init_cli(subparsers):
         action="store_true",
         help="show device tags",
     )
+    parser_li.add_argument(
+        "-l",
+        "--limit",
+        dest="limit",
+        type=int,
+        help="maximum response size",
+        default=20,
+    )
+    parser_li.add_argument(
+        "-s",
+        "--start",
+        dest="start",
+        type=int,
+        help="start index of the search",
+        default=0,
+    )
+
     # LS
     parser_ls = sub.add_parser("ls", help="list devices connectivity")
     parser_ls.set_defaults(func=cmd_device_ls)
@@ -426,6 +468,23 @@ def init_cli(subparsers):
         action="store_true",
         help="show device tags",
     )
+    parser_ls.add_argument(
+        "-l",
+        "--limit",
+        dest="limit",
+        type=int,
+        help="maximum response size",
+        default=20,
+    )
+    parser_ls.add_argument(
+        "-s",
+        "--start",
+        dest="start",
+        type=int,
+        help="start index of the search",
+        default=0,
+    )
+
     # RM
     parser_rm = sub.add_parser("rm", help="remove one or more devices")
     parser_rm.set_defaults(func=cmd_device_rm)
@@ -453,10 +512,42 @@ def init_cli(subparsers):
     parser_events.add_argument(
         "device_identifier", metavar="DEVICE", help="device id or name"
     )
-
-    # Recent events
-    parser_events = sub.add_parser("changes", help="display recent changes")
-    parser_events.set_defaults(func=cmd_device_recent_changes)
     parser_events.add_argument(
+        "-l",
+        "--limit",
+        dest="limit",
+        type=int,
+        help="maximum response size",
+        default=20,
+    )
+    parser_events.add_argument(
+        "-s",
+        "--start",
+        dest="start",
+        type=int,
+        help="start index of the search",
+        default=0,
+    )
+
+    # Recent changes events
+    parser_changes = sub.add_parser("changes", help="display recent changes")
+    parser_changes.set_defaults(func=cmd_device_recent_changes)
+    parser_changes.add_argument(
         "device_identifier", metavar="DEVICE", help="device id or name"
+    )
+    parser_changes.add_argument(
+        "-l",
+        "--limit",
+        dest="limit",
+        type=int,
+        help="maximum response size",
+        default=20,
+    )
+    parser_changes.add_argument(
+        "-s",
+        "--start",
+        dest="start",
+        type=int,
+        help="start index of the search",
+        default=0,
     )

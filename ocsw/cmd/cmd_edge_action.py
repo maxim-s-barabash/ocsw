@@ -49,7 +49,7 @@ async def cmd_edge_actions_inspect(
     pprintj(items)
 
 
-async def cmd_edge_actions_ls(client, **_kwargs):
+async def cmd_edge_actions_ls(client, limit, start, **_kwargs):
     fields = [
         "id",
         "description",
@@ -62,7 +62,8 @@ async def cmd_edge_actions_ls(client, **_kwargs):
     resp = await client.edge_actions(
         fields=fields,
         sort="description",
-        limit=1000,  # TODO: set from configure
+        limit=limit,
+        start=start,
     )
 
     list_data = resp.get("body")
@@ -147,8 +148,24 @@ def init_cli(subparsers):
     )
 
     # LS
-    parser_lc = sub.add_parser("ls", help="list edge action")
-    parser_lc.set_defaults(func=cmd_edge_actions_ls)
+    parser_ls = sub.add_parser("ls", help="list edge action")
+    parser_ls.set_defaults(func=cmd_edge_actions_ls)
+    parser_ls.add_argument(
+        "-l",
+        "--limit",
+        dest="limit",
+        type=int,
+        help="maximum response size",
+        default=20,
+    )
+    parser_ls.add_argument(
+        "-s",
+        "--start",
+        dest="start",
+        type=int,
+        help="start index of the search",
+        default=0,
+    )
 
     # DIFF
     parser_diff = sub.add_parser(

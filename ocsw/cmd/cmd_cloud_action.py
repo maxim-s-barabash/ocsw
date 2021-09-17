@@ -48,7 +48,7 @@ async def cmd_cloud_actions_inspect(
     pprintj(items)
 
 
-async def cmd_cloud_actions_ls(client, **_kwargs):
+async def cmd_cloud_actions_ls(client, limit, start, **_kwargs):
 
     fields = [
         "id",
@@ -62,7 +62,8 @@ async def cmd_cloud_actions_ls(client, **_kwargs):
     resp = await client.actions(
         fields=fields,
         sort="description",
-        limit=1000,  # TODO: set from configure
+        limit=limit,
+        start=start,
     )
 
     list_data = resp.get("body")
@@ -145,6 +146,22 @@ def init_cli(subparsers):
     # LS
     parser_lc = sub.add_parser("ls", help="list cloud action")
     parser_lc.set_defaults(func=cmd_cloud_actions_ls)
+    parser_lc.add_argument(
+        "-l",
+        "--limit",
+        dest="limit",
+        type=int,
+        help="maximum response size",
+        default=20,
+    )
+    parser_lc.add_argument(
+        "-s",
+        "--start",
+        dest="start",
+        type=int,
+        help="start index of the search",
+        default=0,
+    )
 
     # DIFF
     parser_diff = sub.add_parser(
