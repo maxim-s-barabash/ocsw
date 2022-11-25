@@ -84,7 +84,7 @@ class APIClient(
 
     @property
     def current_company(self):
-        if self._company_identifer == None:
+        if self._company_identifer is None:
             msg = "Company identifier not set. Check configuration."
             raise errors.Error(msg)
         return self._company_identifer
