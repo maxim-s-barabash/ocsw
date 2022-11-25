@@ -21,6 +21,7 @@
 """Manage Devices."""
 
 import asyncio
+import json
 from operator import itemgetter
 
 from ..utils import render
@@ -281,7 +282,7 @@ async def cmd_device_tags(client, device_identifier, tags, **_kwargs):
 
 
 async def cmd_device_recent_events(
-    client, device_identifier, limit, start, **_kwargs
+    client, device_identifier, limit, start, only_body, **_kwargs
 ):
     """List devices recent events."""
     resp = await client.inspect_device(
@@ -299,26 +300,29 @@ async def cmd_device_recent_events(
         sort="creationDate",
         order="desc",
     )
-
     data = resp.get("body")
-    columns = [
-        dict(
-            field="creationDate",
-            title="creationDate",
-            render=lambda a, b: format_date(
-                a[b["field"]], "%b %d, %Y %X %Z%z"
-            ),
-        ),
-        dict(
-            field="path",
-            title="EVENT FROM",
-            render=lambda a, b: a["path"].split(f"{device_path}/")[-1],
-        ),
-        dict(field="elems", width=70),
-    ]
 
-    table = ObjTable(data=data, columns=columns)
-    print(table)
+    if only_body:
+        print(json.dumps(data, indent=2))
+    else:
+        columns = [
+            dict(
+                field="creationDate",
+                title="creationDate",
+                render=lambda a, b: format_date(
+                    a[b["field"]], "%b %d, %Y %X %Z%z"
+                ),
+            ),
+            dict(
+                field="path",
+                title="EVENT FROM",
+                render=lambda a, b: a["path"].split(f"{device_path}/")[-1],
+            ),
+            dict(field="elems", width=70),
+        ]
+
+        table = ObjTable(data=data, columns=columns)
+        print(table)
 
 
 async def cmd_device_recent_changes(
@@ -511,6 +515,13 @@ def init_cli(subparsers):
     parser_events.set_defaults(func=cmd_device_recent_events)
     parser_events.add_argument(
         "device_identifier", metavar="DEVICE", help="device id or name"
+    )
+    parser_events.add_argument(
+        "-b",
+        "--body",
+        dest="only_body",
+        help="output only body",
+        action="store_true",
     )
     parser_events.add_argument(
         "-l",
