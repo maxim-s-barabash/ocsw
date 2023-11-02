@@ -1,3 +1,8 @@
+> [!WARNING]  
+> Attached is the Octave services end of life notification.
+> All Octave services will be discontinued on March 31st, 2025, at which point access to the Octave APIs and UI will no longer be available.
+
+
 # ocsw-cli - Octave Cloud IoT command-line tool
 
 [![Build Status](https://travis-ci.com/maxim-s-barabash/ocsw.svg?branch=master)](https://travis-ci.com/maxim-s-barabash/ocsw)
